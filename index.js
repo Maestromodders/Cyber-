@@ -11,7 +11,7 @@ async function authenticationn() {
 
       const [header, b64data] = session.split(';;;');
 
-      if (header === "CYBERX" && b64data) {
+      if (header === "KnightBot" && b64data) {
         let compressedData = Buffer.from(b64data.replace('...', ''), 'base64');
         let decompressedData = zlib.gunzipSync(compressedData);
         fs.writeFileSync(credsPath, decompressedData, "utf8");
