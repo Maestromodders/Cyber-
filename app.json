@@ -1,0 +1,100 @@
+{
+  "name": "CYBER-X",
+  "description": "⚡ CYBER-X WhatsApp Multi-Device Bot",
+  "logo": "https://i.imgur.com/iEWHnOH.jpeg",
+  "keywords": ["whatsapp", "bot", "baileys", "cyber-x"],
+  "repository": "https://github.com/yourusername/CYBER-X",
+  "website": "https://github.com/yourusername/CYBER-X",
+  "success_url": "/",
+  "scripts": {},
+  "env": {
+    "SESSION": {
+      "description": "Your WhatsApp session string (CYBERX;;;base64data)",
+      "required": true
+    },
+    "OWNER_NUMBER": {
+      "description": "Your WhatsApp number without + (e.g. 254700000000)",
+      "required": true
+    },
+    "OWNER_NAME": {
+      "description": "Your name",
+      "value": "CYBER-X Owner",
+      "required": false
+    },
+    "BOTNAME": {
+      "description": "Bot display name",
+      "value": "CYBER-X",
+      "required": false
+    },
+    "PREFIX": {
+      "description": "Command prefix character",
+      "value": ".",
+      "required": false
+    },
+    "MODE": {
+      "description": "Bot mode: public or private",
+      "value": "public",
+      "required": false
+    },
+    "TIMEZONE": {
+      "description": "Your timezone (e.g. Africa/Nairobi)",
+      "value": "Africa/Nairobi",
+      "required": false
+    },
+    "URL": {
+      "description": "Bot thumbnail image URL",
+      "value": "https://i.imgur.com/iEWHnOH.jpeg",
+      "required": false
+    },
+    "EMOJI": {
+      "description": "Reaction emoji for commands",
+      "value": "⚡",
+      "required": false
+    },
+    "ANTICALL": {
+      "description": "Block incoming calls (true/false)",
+      "value": "true",
+      "required": false
+    },
+    "ANTILINK": {
+      "description": "Block links in groups (true/false)",
+      "value": "true",
+      "required": false
+    },
+    "CHATBOT": {
+      "description": "Enable AI chatbot auto-reply (true/false)",
+      "value": "false",
+      "required": false
+    },
+    "AUTOVIEW_STATUS": {
+      "description": "Auto view WhatsApp statuses (true/false)",
+      "value": "true",
+      "required": false
+    },
+    "GREET": {
+      "description": "Send welcome/goodbye messages in groups (true/false)",
+      "value": "true",
+      "required": false
+    },
+    "HEROKU_API_KEY": {
+      "description": "Your Heroku API key for auto-restart",
+      "required": false
+    },
+    "HEROKU_APP_NAME": {
+      "description": "Your Heroku app name for auto-restart",
+      "required": false
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "addons": [],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
