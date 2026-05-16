@@ -256,7 +256,7 @@ async function handleDeletedMessage(client, revocationMessage) {
 //========================================================================================================================//
 let repliedContacts = new Set();
 
-async function startCYBER-X() {
+async function startCyberX() {
   const { saveCreds, state } = await useMultiFileAuthState("session");
   const client = CyberXConnect({
     logger: pino({ level: "silent" }),
@@ -959,7 +959,7 @@ if (body && antimention === 'true') {
       if (reason === DisconnectReason.badSession || reason === DisconnectReason.connectionReplaced || reason === DisconnectReason.loggedOut) {
         process.exit();
       } else {
-        startCYBER-X();
+        startCyberX();
       }
     } else if (connection === "open") {
       console.log(`✅ Connected to CYBER-X server.`);
@@ -1023,9 +1023,9 @@ app.use(express.static("public"));
 app.get("/", (req, res) => res.sendFile(__dirname + "/index.html"));
 app.listen(port, () => console.log(`Server listening on port http://localhost:${port}`));
 
-startCYBER-X();
+startCyberX();
 
-module.exports = startCYBER-X;
+module.exports = startCyberX;
 
 let file = require.resolve(__filename);
 fs.watchFile(file, () => {
