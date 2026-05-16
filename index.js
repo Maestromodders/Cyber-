@@ -40,7 +40,7 @@ async function authenticationn() {
 authenticationn();
 
 const {
-  default: CYBER-XConnect, BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, proto, generateWAMessageContent,
+  default: CyberXConnect, BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, proto, generateWAMessageContent,
   generateWAMessage, prepareWAMessageMedia, areJidsSameUser, getContentType, useMultiFileAuthState,
   DisconnectReason, makeInMemoryStore, downloadContentFromMessage, jidDecode
 } = require("@whiskeysockets/baileys");
@@ -258,7 +258,7 @@ let repliedContacts = new Set();
 
 async function startCYBER-X() {
   const { saveCreds, state } = await useMultiFileAuthState("session");
-  const client = CYBER-XConnect({
+  const client = CyberXConnect({
     logger: pino({ level: "silent" }),
     printQRInTerminal: true,
     version: [2, 3000, 1015901307],
@@ -352,7 +352,7 @@ async function startCYBER-X() {
       }
       
       if (autoview === 'true' && autolike === 'true' && mek.key && mek.key.remoteJid === "status@broadcast") {
-        const CYBER-Xlike = await client.decodeJid(client.user.id);
+        const cyberXLike = await client.decodeJid(client.user.id);
         const emojis = ['😂', '😥', '😇', '🥹', '💥', '💯', '🔥', '💫', '👽', '💗', '❤️‍🔥', '👁️', '👀', '🙌', '🙆', '🌟', '💧', '🎇', '🎆', '♂️', '✅'];
         const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
         const delayMessage = 3000;
@@ -361,7 +361,7 @@ async function startCYBER-X() {
             text: randomEmoji,
             key: mek.key,
           }
-        }, { statusJidList: [mek.key.participant, CYBER-Xlike] });
+        }, { statusJidList: [mek.key.participant, cyberXLike] });
         await sleep(delayMessage);
       }
 
@@ -406,7 +406,7 @@ async function startCYBER-X() {
       let budy = typeof m.text === "string" ? m.text : "";
 
       const timestamp = speed();
-      const CYBER-Xspeed = speed() - timestamp;
+      const cyberXSpeed = speed() - timestamp;
 
       const getGroupAdmins = (participants) => {
         let admins = [];
@@ -475,9 +475,9 @@ async function startCYBER-X() {
     await client.sendPresenceUpdate(presence, m.chat);
 }
         /*if (m.isGroup && gcpresence === 'true') {
-        let CYBER-Xrecordin = ['recording', 'composing'];
-        let CYBER-Xrecordinfinal = CYBER-Xrecordin[Math.floor(Math.random() * CYBER-Xrecordin.length)];
-        await client.sendPresenceUpdate(CYBER-Xrecordinfinal, m.chat);
+        let cyberXRecordin = ['recording', 'composing'];
+        let cyberXRecordinfinal = cyberXRecordin[Math.floor(Math.random() * cyberXRecordin.length)];
+        await client.sendPresenceUpdate(cyberXRecordinfinal, m.chat);
       }*/
 
       
@@ -632,17 +632,17 @@ if (body && antimention === 'true') {
             return;
           }
 
-          const response = await axios.get('https://CYBER-X-api.vercel.app/ai/gpt', {
+          const response = await axios.get('https://keith-api.vercel.app/ai/gpt', {
             params: {
               q: text
             }
           });
 
-          const CYBER-X = response.data;
+          const cyberXData = response.data;
 
-          if (CYBER-X && CYBER-X.status && CYBER-X.result) {
+          if (CYBER-X && cyberXData.status && cyberXData.result) {
             await client.sendMessage(m.chat, {
-              text: CYBER-X.result
+              text: cyberXData.result
             });
             lastTextTime = currentTime;
           } else {
@@ -662,7 +662,7 @@ if (body && antimention === 'true') {
             return;
           }
 
-          const response = await axios.get('https://CYBER-X-api.vercel.app/ai/gpt', {
+          const response = await axios.get('https://keith-api.vercel.app/ai/gpt', {
             params: {
               q: text
             }
@@ -674,7 +674,7 @@ if (body && antimention === 'true') {
             throw new Error('Invalid response from the API');
           }
 
-          const CYBER-X = response.data.result;
+          const cyberXData = response.data.result;
 
           const audioUrl = googleTTS.getAudioUrl(CYBER-X, {
             lang: 'en',
@@ -710,6 +710,174 @@ if (body && antimention === 'true') {
         } catch (error) {
           console.error('Error in antibot functionality:', error);
         }
+      }
+
+      // ══════════════════════════════════════════════════════════════
+      // ⚡ CYBER-X: Anti Group Mention
+      // Blocks members from tagging @all / @everyone / @here in groups
+      // ══════════════════════════════════════════════════════════════
+      try {
+        const storeData = (() => {
+          try { return JSON.parse(require('fs').readFileSync('./store.json', 'utf8')); } catch { return {}; }
+        })();
+        const antiGMEnabled = process.env.ANTI_GROUP_MENTION === 'true' || storeData.antiGroupMention === true;
+
+        if (antiGMEnabled && m.isGroup && body) {
+          // Detect @all, @everyone, @here or bulk mention of the entire group
+          const groupMentionPattern = /@(all|everyone|here)\b/i.test(body);
+          const mentionedJids = m.mentionedJid || [];
+          let groupSize = 0;
+          try { groupSize = (await client.groupMetadata(m.chat)).participants.length; } catch {}
+          const isBulkMention = mentionedJids.length >= Math.max(5, Math.floor(groupSize * 0.5));
+
+          if ((groupMentionPattern || isBulkMention) && !isOwner && !isAdmin) {
+            if (isBotAdmin) {
+              // Delete the offending message
+              await client.sendMessage(m.chat, {
+                delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.sender }
+              });
+              await client.sendMessage(m.chat, {
+                text: `🚫 *Anti Group Mention* 🚫\n\n@${m.sender.split('@')[0]} tried to tag the entire group.\nThis is not allowed! ⚠️`,
+                mentions: [m.sender],
+                contextInfo: { mentionedJid: [m.sender] }
+              });
+            } else {
+              await client.sendMessage(m.chat, {
+                text: `⚠️ *Anti Group Mention*\n\n@${m.sender.split('@')[0]}, tagging @all or @everyone is not allowed here!\n\n_(Promote me to admin to automatically delete such messages)_`,
+                mentions: [m.sender],
+                contextInfo: { mentionedJid: [m.sender] }
+              }, { quoted: m });
+            }
+          }
+        }
+      } catch (agmErr) {
+        console.error('Anti Group Mention error:', agmErr.message);
+      }
+
+      // ══════════════════════════════════════════════════════════════
+      // ⚡ CYBER-X: View Once Inbox
+      // Saves view-once photos/videos and sends them to owner's inbox
+      // ══════════════════════════════════════════════════════════════
+      try {
+        const storeDataVO = (() => {
+          try { return JSON.parse(require('fs').readFileSync('./store.json', 'utf8')); } catch { return {}; }
+        })();
+        const voInboxEnabled = process.env.VIEWONCE_INBOX === 'true' || storeDataVO.viewOnceInbox === true;
+        const ownerJid = dev + '@s.whatsapp.net';
+        const botJid = client.decodeJid(client.user.id);
+
+        if (voInboxEnabled) {
+          const msgContent = mek.message;
+          // View-once image
+          if (msgContent?.viewOnceMessage?.message?.imageMessage ||
+              msgContent?.viewOnceMessageV2?.message?.imageMessage) {
+            const voMsg = msgContent?.viewOnceMessage?.message?.imageMessage ||
+                          msgContent?.viewOnceMessageV2?.message?.imageMessage;
+            const sender = mek.key.participant || mek.key.remoteJid;
+            const senderNum = sender.split('@')[0];
+            const buffer = await client.downloadMediaMessage(mek);
+            await client.sendMessage(botJid, {
+              image: buffer,
+              caption: `👁️ *CYBER-X View Once Inbox*\n\n📩 *From:* @${senderNum}\n📍 *Chat:* ${m.isGroup ? (await client.groupMetadata(m.chat).catch(() => ({subject: m.chat}))).subject : 'Private'}\n\n_View-once image captured._`,
+              mentions: [sender]
+            });
+          }
+          // View-once video
+          else if (msgContent?.viewOnceMessage?.message?.videoMessage ||
+                   msgContent?.viewOnceMessageV2?.message?.videoMessage) {
+            const voVid = msgContent?.viewOnceMessage?.message?.videoMessage ||
+                          msgContent?.viewOnceMessageV2?.message?.videoMessage;
+            const sender = mek.key.participant || mek.key.remoteJid;
+            const senderNum = sender.split('@')[0];
+            const buffer = await client.downloadMediaMessage(mek);
+            await client.sendMessage(botJid, {
+              video: buffer,
+              caption: `👁️ *CYBER-X View Once Inbox*\n\n📩 *From:* @${senderNum}\n📍 *Chat:* ${m.isGroup ? (await client.groupMetadata(m.chat).catch(() => ({subject: m.chat}))).subject : 'Private'}\n\n_View-once video captured._`,
+              mentions: [sender]
+            });
+          }
+        }
+      } catch (voErr) {
+        console.error('View Once Inbox error:', voErr.message);
+      }
+
+      // ══════════════════════════════════════════════════════════════
+      // ⚡ CYBER-X: Anti Delete Sent Inbox (private DMs only)
+      // Recovers messages deleted from owner's private inbox
+      // ══════════════════════════════════════════════════════════════
+      try {
+        const storeDataADI = (() => {
+          try { return JSON.parse(require('fs').readFileSync('./store.json', 'utf8')); } catch { return {}; }
+        })();
+        const adiEnabled = process.env.ANTIDELETE_INBOX === 'true' || storeDataADI.antiDeleteInbox === true;
+
+        if (adiEnabled) {
+          const isPrivateChat = !m.isGroup && !mek.key.remoteJid?.endsWith('@g.us');
+          const isDeleteMsg = mek.message?.protocolMessage?.type === 0; // REVOKE type
+
+          if (isPrivateChat && isDeleteMsg) {
+            const deletedKey = mek.message.protocolMessage.key;
+            const deletedMsgId = deletedKey?.id;
+            const chatData = loadChatData(mek.key.remoteJid, deletedMsgId);
+            const originalMsg = chatData[0];
+            const botJidADI = client.decodeJid(client.user.id);
+            const senderNum = (mek.key.participant || mek.key.remoteJid).split('@')[0];
+
+            if (originalMsg) {
+              const header = `🔒 *CYBER-X Anti Delete Inbox*\n\n🗑️ *@${senderNum} deleted a message in your DM:*\n`;
+
+              if (originalMsg.message?.conversation) {
+                await client.sendMessage(botJidADI, {
+                  text: header + `\n\`\`\`${originalMsg.message.conversation}\`\`\``,
+                  mentions: [mek.key.remoteJid]
+                });
+              } else if (originalMsg.message?.extendedTextMessage) {
+                await client.sendMessage(botJidADI, {
+                  text: header + `\n\`\`\`${originalMsg.message.extendedTextMessage.text}\`\`\``,
+                  mentions: [mek.key.remoteJid]
+                });
+              } else if (originalMsg.message?.imageMessage) {
+                const buf = await client.downloadMediaMessage(originalMsg);
+                await client.sendMessage(botJidADI, {
+                  image: buf,
+                  caption: header + (originalMsg.message.imageMessage.caption ? `\n📝 Caption: ${originalMsg.message.imageMessage.caption}` : ''),
+                  mentions: [mek.key.remoteJid]
+                });
+              } else if (originalMsg.message?.videoMessage) {
+                const buf = await client.downloadMediaMessage(originalMsg);
+                await client.sendMessage(botJidADI, {
+                  video: buf,
+                  caption: header + (originalMsg.message.videoMessage.caption ? `\n📝 Caption: ${originalMsg.message.videoMessage.caption}` : ''),
+                  mentions: [mek.key.remoteJid]
+                });
+              } else if (originalMsg.message?.audioMessage) {
+                const buf = await client.downloadMediaMessage(originalMsg);
+                await client.sendMessage(botJidADI, {
+                  audio: buf,
+                  mimetype: 'audio/mp4',
+                  caption: header,
+                  mentions: [mek.key.remoteJid]
+                });
+              } else if (originalMsg.message?.stickerMessage) {
+                const buf = await client.downloadMediaMessage(originalMsg);
+                await client.sendMessage(botJidADI, { sticker: buf });
+                await client.sendMessage(botJidADI, { text: header + '_(Sticker recovered)_', mentions: [mek.key.remoteJid] });
+              } else {
+                await client.sendMessage(botJidADI, {
+                  text: header + '\n_(Message type not recoverable)_',
+                  mentions: [mek.key.remoteJid]
+                });
+              }
+            }
+          }
+
+          // Also store incoming private messages for recovery
+          if (isPrivateChat && !isDeleteMsg) {
+            handleIncomingMessage(mek);
+          }
+        }
+      } catch (adiErr) {
+        console.error('Anti Delete Inbox error:', adiErr.message);
       }
 
       if (cmd && mode === "private" && !itsMe && m.sender !== daddy) return;
