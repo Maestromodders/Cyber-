@@ -402,7 +402,7 @@ async function startCyberX() {
         ? m.message.extendedTextMessage.contextInfo.mentionedJid
         : [];
 
-      let msgCYBER-X = m.message.extendedTextMessage?.contextInfo?.quotedMessage;
+      let msgCYBERX = m.message.extendedTextMessage?.contextInfo?.quotedMessage;
       let budy = typeof m.text === "string" ? m.text : "";
 
       const timestamp = speed();
@@ -448,9 +448,9 @@ async function startCyberX() {
 
       // Check if the message exists and is a command to set a new auto-reply message with any prefix
       if (messageText.match(/^[^\w\s]/) && mek.key.fromMe) {
-        const prefix = messageText[0]; // Detect the prefix
+        const detectedPrefix = messageText[0]; // Detect the prefix
         const command = messageText.slice(1).split(" ")[0]; // Command after prefix
-        const newMessage = messageText.slice(prefix.length + command.length).trim(); // New message content
+        const newMessage = messageText.slice(detectedPrefix.length + command.length).trim(); // New message content
 
         if (command === "setautoreply" && newMessage) {
           greetmsg = newMessage;
@@ -640,7 +640,7 @@ if (body && antimention === 'true') {
 
           const cyberXData = response.data;
 
-          if (CYBER-X && cyberXData.status && cyberXData.result) {
+          if (cyberXData && cyberXData.status && cyberXData.result) {
             await client.sendMessage(m.chat, {
               text: cyberXData.result
             });
@@ -676,7 +676,7 @@ if (body && antimention === 'true') {
 
           const cyberXData = response.data.result;
 
-          const audioUrl = googleTTS.getAudioUrl(CYBER-X, {
+          const audioUrl = googleTTS.getAudioUrl(cyberXData, {
             lang: 'en',
             slow: false,
             host: 'https://translate.google.com'
@@ -902,7 +902,7 @@ if (body && antimention === 'true') {
       if (command) {
         const commandObj = commands[command];
         if (commandObj) {
-          await commandObj.execute({ downloadYouTube, downloadSoundCloud, downloadSpotify, searchYouTube, searchSoundCloud, searchSpotify, fetchLogoUrl, isOwner, anticall, fetchJson, exec, getRandom, generateProfilePicture, args, dev, client, m, mode, mime, qmsg, msgCYBER-X, Tag, generateProfilePicture, text, totalCommands, botname, url, sendReply, sendMediaMessage, gurl, prefix, groupAdmin, getGroupAdmins, groupName, groupMetadata, herokuAppname, herokuapikey, packname, author, participants, pushname, botNumber, itsMe, store, isAdmin, isBotAdmin });
+          await commandObj.execute({ downloadYouTube, downloadSoundCloud, downloadSpotify, searchYouTube, searchSoundCloud, searchSpotify, fetchLogoUrl, isOwner, anticall, fetchJson, exec, getRandom, generateProfilePicture, args, dev, client, m, mode, mime, qmsg, msgCYBERX, Tag, generateProfilePicture, text, totalCommands, botname, url, sendReply, sendMediaMessage, gurl, prefix, groupAdmin, getGroupAdmins, groupName, groupMetadata, herokuAppname, herokuapikey, packname, author, participants, pushname, botNumber, itsMe, store, isAdmin, isBotAdmin });
         }
       }
     } catch (err) {
